@@ -1,0 +1,35 @@
+version: '3'
+services:
+  app:
+    container_name: zadanie
+    build: .
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DATABASE_URL=postgres://postgres:123321@db:5432/zadanie
+
+  db:
+    image: postgres
+    restart: always
+    container_name: postgres-zd
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123321
+      - POSTGRES_DB=zadanie
+
+  redis:
+    image: redis
+    restart: always
+    container_name: redis-zd
+    ports:
+      - '6379:6379'
+
+
+
+
+
