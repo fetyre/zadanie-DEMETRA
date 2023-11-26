@@ -8,5 +8,5 @@ export interface IErrorResponse {
 	status: number;
 	source?: IErrorPointer;
 	title: string;
-	detail: string;
+	detail: string | object;
 }

@@ -18,6 +18,34 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import * as crypto from 'crypto';
 
+/**
+ * @constant delayForUserStatusChange
+ * @description Задержка перед обновлением статуса пользователя.
+ * @type {number}
+ */
+const delayForUserStatusChange: number = 10000;
+
+/**
+ * @constant maxAttemptsForUserStatusChange
+ * @description Максимальное количество попыток обновления статуса пользователя.
+ * @type {number}
+ */
+const maxAttemptsForUserStatusChange: number = 3;
+
+/**
+ * @constant backoffTypeForUserStatusChange
+ * @description Тип отката для обновления статуса пользователя.
+ * @type {string}
+ */
+const backoffTypeForUserStatusChange: string = 'fixed';
+
+/**
+ * @constant backoffDelayForUserStatusChange
+ * @description Задержка отката для обновления статуса пользователя.
+ * @type {number}
+ */
+const backoffDelayForUserStatusChange: number = 5000;
+
 @Injectable()
 export class UsersService {
 	private readonly logger: Logger = new Logger(UsersService.name);
@@ -39,7 +67,7 @@ export class UsersService {
 	 * @returns {Promise<User>} Созданый объект пользователя.
 	 * @throws {BadRequestException} Если email адрес уже занят.
 	 * @throws {InternalServerErrorException} Если возникла внутренняя ошибка сервера.
-	 * @see {@link validateNewUser} Поиск пользователя по email в бд и проверка его наличия.
+	 * @see {@link checkIfEmailExists} Поиск пользователя по email в бд и проверка его наличия.
 	 * @see {@link hashPassword} Хэширование пароля.
 	 * @see {@link createUserEntity} Создание нового экземпляра сущности.
 	 * @see {@link saveUserToDatabase} Сохранение в бд.
@@ -49,7 +77,7 @@ export class UsersService {
 	public async create(createData: ICreateUser): Promise<User> {
 		try {
 			this.logger.log(`Запуск create, email: ${createData.email}.`);
-			await this.validateNewUser(createData);
+			await this.checkIfEmailExists(createData);
 			this.hashPassword(createData);
 			return await this.usersRepository.manager.transaction(
 				async transactionalEntityManager => {
@@ -110,11 +138,11 @@ export class UsersService {
 	private async updateUserStatus(user: User): Promise<void> {
 		this.logger.log(`Запуск updateUserStatus, userId: ${user.id}.`);
 		await this.mailQueue.add('updateStatus', user, {
-			delay: 10000,
-			attempts: 3,
+			delay: delayForUserStatusChange,
+			attempts: maxAttemptsForUserStatusChange,
 			backoff: {
-				type: 'fixed',
-				delay: 5000
+				type: backoffTypeForUserStatusChange,
+				delay: backoffDelayForUserStatusChange
 			}
 		});
 	}
@@ -136,7 +164,7 @@ export class UsersService {
 
 	/**
 	 * @private
-	 * @method validateNewUser
+	 * @method checkIfEmailExists
 	 * @descriptionРегистрация Проверка наличия пользователя по email в базе данных.
 	 * @param {ICreateUser} createData - Дaнные для проверки свободности email.
 	 * @returns {Promise<void>} void.
@@ -144,7 +172,7 @@ export class UsersService {
 	 * @see {@link findUserByEmail} Поиск пользователя по email в бд.
 	 * @see {@link checkIfUserExists} Проверка наличия пользователя.
 	 */
-	private async validateNewUser(createData: ICreateUser): Promise<void> {
+	private async checkIfEmailExists(createData: ICreateUser): Promise<void> {
 		this.logger.log(`Запуск validateNewUser, email: ${createData.email}.`);
 		const user: OptionalUser = await this.findUserByEmail(createData);
 		this.checkIfUserExists(user);

@@ -9,7 +9,7 @@ import {
 	IsNotEmpty
 } from 'class-validator';
 import { ICreateUser } from '../interface';
-import { NAME_REGEX, PASSWORD_REGEX } from 'src/common/regex.const';
+import { NAME_REGEX, PASSWORD_REGEX } from '../../common/regex.const';
 
 /**
  * @class CreateUserDto.

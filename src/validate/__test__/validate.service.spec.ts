@@ -5,8 +5,8 @@ import { ConfigLoaderService } from '../../config/config-loader.service';
 describe('ValidateService', () => {
 	let service: ValidateService;
 
-	const validId = 'tz4a98xxat96iws9zmbrgj3a';
-	const invalidId = 'invaвввв%lid-id';
+	const validId: string = 'tz4a98xxat96iws9zmbrgj3a';
+	const invalidId: string = 'invaвввв%lid-id';
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({

@@ -28,3 +28,6 @@ DB_DATABASE='your_database_name'
 ## Тестирование
 Тесты можно запустить с помощью команды `npm test`.
 
+## Docker
+Измените в файле `docker-compose.yml` значения на свои.
+

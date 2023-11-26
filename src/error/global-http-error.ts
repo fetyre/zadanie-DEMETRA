@@ -50,7 +50,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 		host: ArgumentsHost
 	): void {
 		const status: number = this.extractStatus(exception);
-		const message: string = this.extractErrorMessage(exception);
+		const message: string | object = this.extractErrorMessage(exception);
 		const requestUrl = host.switchToHttp().getRequest().url;
 		const errorTitle: string = STATUS_CODES[status] || 'Error';
 		const responseBody: IErrorResponse = this.createResponseBody(
@@ -67,14 +67,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
 	 * @method createResponseBody
 	 * @description Создает тело ответа.
 	 * @param {number} status - Статус ответа.
-	 * @param {string} message - Сообщение ответа.
+	 * @param {string | object} message - Сообщение ответа.
 	 * @param {string} title - Заголовок ответа.
 	 * @param {string} requestUrl - URL запроса.
 	 * @returns {IErrorResponse} Тело ответа.
 	 */
 	private createResponseBody(
 		status: number,
-		message: string,
+		message: string | object,
 		title: string,
 		requestUrl?: string
 	): IErrorResponse {
@@ -91,11 +91,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
 	 * @method extractErrorMessage
 	 * @description Извлекает сообщение об ошибке из исключения.
 	 * @param {HttpException} exception - Исключение для извлечения сообщения.
-	 * @returns {string} Сообщение об ошибке.
+	 * @returns {string | object} Сообщение об ошибке.
 	 */
-	private extractErrorMessage(exception: HttpException): string {
+	private extractErrorMessage(exception: HttpException): string | object {
 		return exception instanceof HttpException
-			? exception.getResponse().toString()
+			? exception.getResponse()
 			: this.configLoaderService.errorDefaultMessage;
 	}
 

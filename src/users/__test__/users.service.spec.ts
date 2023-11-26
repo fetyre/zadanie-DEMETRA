@@ -10,6 +10,7 @@ import * as dotenv from 'dotenv';
 import { ConfigLoaderService } from '../../config/config-loader.service';
 import { Cache } from 'cache-manager';
 import { ConfigService } from '@nestjs/config';
+import { CreateUserDto } from '../dto/create-user.dto';
 
 dotenv.config();
 
@@ -28,7 +29,7 @@ describe('UsersService', () => {
 		updatedAt: new Date()
 	};
 
-	const mockDto = {
+	const mockDto: CreateUserDto = {
 		name: 'Ivan Ivanov',
 		email: 'ivan@example.com',
 		password: 'Password123'
@@ -106,7 +107,7 @@ describe('UsersService', () => {
 			);
 		});
 
-		it('should throw an error when findOne is called', async () => {
+		it('should throw an error when findOne is called and database down', async () => {
 			jest.spyOn(repo, 'findOne').mockRejectedValue(new Error('Ошибка'));
 			await expect(service.create(mockDto)).rejects.toThrow();
 		});

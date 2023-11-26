@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bull';
-import { ProxyRequestModule } from './proxy-request-service/proxy-request.module';
 import { ConfigLoaderModule } from './config/config-loader.module';
 import { ValidateModule } from './validate/validate.module';
 import { ErrorHandlerModule } from './errro-catch/error-catch.module';
@@ -45,8 +44,7 @@ import { ConfigLoaderService } from './config/config-loader.service';
 		UsersModule,
 		ConfigLoaderModule,
 		ValidateModule,
-		ErrorHandlerModule,
-		ProxyRequestModule
+		ErrorHandlerModule
 	],
 	controllers: [],
 	providers: []

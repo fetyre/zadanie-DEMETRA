@@ -77,10 +77,14 @@ export class UsersController {
 	@ApiInternalServerErrorResponse({
 		description: 'Внутренняя ошибка сервера'
 	})
-	async create(@Body() dto: CreateUserDto, @Res() res: Response) {
+	async create(
+		@Body() dto: CreateUserDto,
+		@Res() res: Response
+	): Promise<void> {
 		const user: User = await this.usersService.create(dto);
 		res.status(HttpStatus.CREATED).json(user);
 	}
+
 	@ApiOperation({ summary: 'Получение пользователя по ID' })
 	@ApiParam({
 		name: 'id',
