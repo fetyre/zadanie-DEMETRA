@@ -19,6 +19,8 @@ DB_PORT=your_database_port
 DB_USERNAME='your_database_username'
 DB_PASSWORD='your_database_password'
 DB_DATABASE='your_database_name'
+ ```
+
 
 4. Запустите проект с помощью `npm start`.
 
